@@ -6,6 +6,8 @@ import com.joe.cms.common.Address;
 import com.joe.cms.common.BaseEntity;
 import com.joe.cms.parcel.model.Parcel;
 import com.joe.cms.parcel.model.WeightBand;
+import com.joe.cms.projectmanagement.model.Project;
+import com.joe.cms.projectmanagement.model.Task;
 import lombok.*;
 
 import javax.persistence.*;
@@ -34,5 +36,11 @@ public class Company extends BaseEntity {
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
     private List<WeightBand> weightBands;
+
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+    private List<Project> projects;
+
+    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+    private List<Task> tasks;
 
 }

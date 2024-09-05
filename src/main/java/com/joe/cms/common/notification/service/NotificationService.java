@@ -154,7 +154,7 @@ public class NotificationService {
 
     private EmailSettingsDTO convertToDto(CompanyEmailSettings emailSettings) {
         EmailSettingsDTO dto = new EmailSettingsDTO();
-        dto.setCompanyId(emailSettings.getCompany().getId());
+        //dto.setCompanyId(emailSettings.getCompany().getId());
         dto.setHost(emailSettings.getHost());
         dto.setPort(emailSettings.getPort());
         dto.setUsername(emailSettings.getUsername());
