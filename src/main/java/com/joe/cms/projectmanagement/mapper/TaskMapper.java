@@ -10,17 +10,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class TaskMapper {
 
-    @Autowired
-    private final ProjectRepo projectRepo;
-
-    public TaskMapper(ProjectRepo projectRepo) {
-        this.projectRepo = projectRepo;
-    }
-
     // Converts Task entity to TaskDTO
-    public TaskDTO toDTO(Task task){
+    public TaskDTO toDTO(Task task) {
+        if (task == null) {
+            return null;
+        }
+
         TaskDTO dto = new TaskDTO();
         dto.setId(task.getId());
+        dto.setName(task.getName());
         dto.setDescription(task.getDescription());
         dto.setStatus(task.getStatus());
         dto.setProjectId(task.getProject().getId());
@@ -28,16 +26,29 @@ public class TaskMapper {
     }
 
     // Converts TaskDTO to Task entity
-    public Task toEntity(TaskDTO dto){
+    public Task toEntity(TaskDTO dto, Project project) {
+        if (dto == null) {
+            return null;
+        }
+
         Task task = new Task();
         task.setId(dto.getId());
+        task.setName(dto.getName());
         task.setDescription(dto.getDescription());
         task.setStatus(dto.getStatus());
-
-        // Fetch the associated Project entity using the projectId from the DTO
-        Project project = projectRepo.findById(dto.getProjectId())
-                .orElseThrow(() -> new RuntimeException("Project not found"));
         task.setProject(project);
         return task;
+    }
+
+    // Updates an existing Task entity with TaskDTO data
+    public void updateEntity(Task task, TaskDTO dto) {
+        if (dto == null) {
+            return;
+        }
+
+        task.setName(dto.getName());
+        task.setDescription(dto.getDescription());
+        task.setStatus(dto.getStatus());
+        // Note: Project association is handled separately if needed
     }
 }

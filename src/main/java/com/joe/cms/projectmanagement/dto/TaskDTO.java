@@ -10,6 +10,9 @@ import javax.validation.constraints.NotBlank;
 public class TaskDTO extends BaseEntity {
 
     @NotBlank(message = "Cannot Be Empty")
+    private String name;
+
+    @NotBlank(message = "Cannot Be Empty")
     private String description;
 
     private Status status;

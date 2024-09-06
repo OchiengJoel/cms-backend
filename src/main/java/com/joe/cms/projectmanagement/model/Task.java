@@ -17,6 +17,9 @@ public class Task extends BaseEntity {
     private Company company;
 
     @Column(name = "name")
+    private String name;
+
+    @Column(name = "description")
     private String description;
 
     @Enumerated(EnumType.STRING)
