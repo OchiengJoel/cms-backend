@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/v1/projects/company/{companyId}/projects")
+@RequestMapping("/api/v1/company/{companyId}/projects")
 public class ProjectController {
 
     @Autowired
@@ -72,15 +72,28 @@ public class ProjectController {
     }
 
     // Creates a new project with error handling
-    @PostMapping
+//    @PostMapping("/create")
+//    public ResponseEntity<?> createProject(@PathVariable Long companyId, @RequestBody ProjectDTO projectDTO) {
+//        try {
+//            projectDTO.setCompanyId(companyId); // Ensure the company ID is set in the DTO
+//            ProjectDTO createdProject = projectService.createProject(projectDTO);
+//            // Return the created project with a CREATED status
+//            return new ResponseEntity<>(createdProject, HttpStatus.CREATED);
+//        } catch (Exception e) {
+//            // In case of an error, return a message with an INTERNAL_SERVER_ERROR status
+//            return new ResponseEntity<>("An error occurred while creating the project.", HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+
+    @PostMapping("/create")
     public ResponseEntity<?> createProject(@PathVariable Long companyId, @RequestBody ProjectDTO projectDTO) {
         try {
             projectDTO.setCompanyId(companyId); // Ensure the company ID is set in the DTO
+            System.out.println("Creating project: " + projectDTO); // Log the DTO
             ProjectDTO createdProject = projectService.createProject(projectDTO);
-            // Return the created project with a CREATED status
             return new ResponseEntity<>(createdProject, HttpStatus.CREATED);
         } catch (Exception e) {
-            // In case of an error, return a message with an INTERNAL_SERVER_ERROR status
+            e.printStackTrace();  // Print full stack trace for debugging
             return new ResponseEntity<>("An error occurred while creating the project.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

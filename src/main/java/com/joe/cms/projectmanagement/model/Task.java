@@ -6,6 +6,7 @@ import com.joe.cms.projectmanagement.enums.Status;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Data
 @Entity
@@ -21,6 +22,8 @@ public class Task extends BaseEntity {
 
     @Column(name = "description")
     private String description;
+
+    private LocalDateTime dueDate;
 
     @Enumerated(EnumType.STRING)
 //    private Enum<Status> status;
