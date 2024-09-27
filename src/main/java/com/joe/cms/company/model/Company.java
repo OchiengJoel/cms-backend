@@ -1,5 +1,6 @@
 package com.joe.cms.company.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.joe.cms.common.Address;
@@ -38,9 +39,7 @@ public class Company extends BaseEntity {
     private List<WeightBand> weightBands;
 
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
+    @JsonIgnore // This will prevent infinite recursion
     private List<Project> projects;
-
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL)
-    private List<Task> tasks;
 
 }

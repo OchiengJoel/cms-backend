@@ -14,4 +14,5 @@ public interface ProjectRepo extends JpaRepository<Project, Long> {
     List<Project> findByCompanyId(Long companyId);
     Optional<Project> findByIdAndCompanyId(Long projectId, Long companyId);
     List<Project> findByIdInAndCompanyId(List<Long> projectIds, Long companyId);
+
 }

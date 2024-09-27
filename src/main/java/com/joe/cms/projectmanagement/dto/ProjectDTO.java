@@ -6,6 +6,7 @@ import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -20,6 +21,10 @@ public class ProjectDTO extends BaseEntity {
 
     private Long companyId; // Refers to the company the project belongs to
 
+   // private List<TaskDTO> tasks;
+
+    private List<TaskDTO> tasks = new ArrayList<>(); // Initialize to empty array
+
     private List<Long> taskIds; // List of task IDs associated with the project
 
     private Date projectStartDate;
@@ -27,7 +32,5 @@ public class ProjectDTO extends BaseEntity {
     private ProjectStatus projectStatus = ProjectStatus.IN_PROGRESS;
     private String projectLocation;
     private BigDecimal projectBudget;
-
-
 
 }

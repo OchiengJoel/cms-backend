@@ -1,6 +1,6 @@
 package com.joe.cms.projectmanagement.enums;
 
-public enum Status {
+public enum TaskStatus {
 
     TODO,
     IN_PROGRESS,

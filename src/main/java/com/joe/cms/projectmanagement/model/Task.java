@@ -1,21 +1,19 @@
 package com.joe.cms.projectmanagement.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.joe.cms.common.BaseEntity;
 import com.joe.cms.company.model.Company;
-import com.joe.cms.projectmanagement.enums.Status;
+import com.joe.cms.projectmanagement.enums.TaskStatus;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @Entity
 @Table(name = "cms_tasks")
 public class Task extends BaseEntity {
-
-    @ManyToOne
-    @JoinColumn(name = "company_id")
-    private Company company;
 
     @Column(name = "name")
     private String name;
@@ -23,15 +21,15 @@ public class Task extends BaseEntity {
     @Column(name = "description")
     private String description;
 
-    private LocalDateTime dueDate;
+    @Column(name = "due_date")
+    private Date dueDate;
 
     @Enumerated(EnumType.STRING)
 //    private Enum<Status> status;
-    private Status status = Status.TODO;
+    private TaskStatus status = TaskStatus.TODO;
 
     @ManyToOne
     @JoinColumn(name = "project_id")
+    @JsonIgnore // Avoid recursion in JSON responses
     private Project project;
-
-
 }

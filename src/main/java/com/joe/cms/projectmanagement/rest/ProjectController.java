@@ -23,25 +23,6 @@ public class ProjectController {
         this.projectService = projectService;
     }
 
-    // Endpoint to retrieve projects by company ID
-//    @GetMapping("/company/{companyId}")
-//    public List<ProjectDTO> getProjectsByCompany(@PathVariable Long companyId) {
-//        return projectService.getProjectsByCompany(companyId);
-//    }
-
-    // Retrieves projects for the specified company with error handling
-//    @GetMapping("/list")
-//    public ResponseEntity<List<?>> getProjectsByCompany(@PathVariable Long companyId) {
-//        try {
-//            List<ProjectDTO> projects = projectService.getProjectsByCompany(companyId);
-//            if (projects.isEmpty()) {
-//                return new ResponseEntity<>("No projects found for the specified company.", HttpStatus.NOT_FOUND);
-//            }
-//            return new ResponseEntity<>(projects, HttpStatus.OK);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>("An error occurred while retrieving projects.", HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
 
     // Retrieves all projects for the specified company
     @GetMapping("/list")
@@ -59,6 +40,13 @@ public class ProjectController {
         }
     }
 
+    // Retrieves projects with their corresponding tasks for the specified company
+    @GetMapping("/projects-tasks")
+    public ResponseEntity<List<ProjectDTO>> getProjectsWithTasksByCompanyId(@PathVariable Long companyId) {
+        List<ProjectDTO> projects = projectService.getProjectsWithTasksByCompanyId(companyId);
+        return ResponseEntity.ok(projects);
+    }
+
     // View a specific project by project ID
     @GetMapping("/{projectId}")
     public ResponseEntity<?> viewProject(@PathVariable Long companyId, @PathVariable Long projectId) {
@@ -70,20 +58,6 @@ public class ProjectController {
             return new ResponseEntity<>("Project not found.", HttpStatus.NOT_FOUND);
         }
     }
-
-    // Creates a new project with error handling
-//    @PostMapping("/create")
-//    public ResponseEntity<?> createProject(@PathVariable Long companyId, @RequestBody ProjectDTO projectDTO) {
-//        try {
-//            projectDTO.setCompanyId(companyId); // Ensure the company ID is set in the DTO
-//            ProjectDTO createdProject = projectService.createProject(projectDTO);
-//            // Return the created project with a CREATED status
-//            return new ResponseEntity<>(createdProject, HttpStatus.CREATED);
-//        } catch (Exception e) {
-//            // In case of an error, return a message with an INTERNAL_SERVER_ERROR status
-//            return new ResponseEntity<>("An error occurred while creating the project.", HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-//    }
 
     @PostMapping("/create")
     public ResponseEntity<?> createProject(@PathVariable Long companyId, @RequestBody ProjectDTO projectDTO) {
@@ -99,7 +73,7 @@ public class ProjectController {
     }
 
     // Updates an existing project by project ID
-    @PutMapping("/{projectId}")
+    @PutMapping("/update/{projectId}")
     public ResponseEntity<?> updateProject(@PathVariable Long companyId, @PathVariable Long projectId, @RequestBody ProjectDTO projectDTO) {
         try {
             projectDTO.setCompanyId(companyId); // Ensure the company ID is set
@@ -113,12 +87,13 @@ public class ProjectController {
     }
 
     // Deletes a project by project ID
-    @DeleteMapping("/{projectId}")
+    @DeleteMapping("/delete/{projectId}")
     public ResponseEntity<?> deleteProject(@PathVariable Long companyId, @PathVariable Long projectId) {
         try {
             projectService.deleteProject(projectId, companyId);
             // Return a NO_CONTENT status for successful deletion
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            //return new ResponseEntity<>("Project Deleted ", HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>("Project Deleted ", HttpStatus.OK);
         } catch (Exception e) {
             // Return an error message with a NOT_FOUND status
             return new ResponseEntity<>("Project not found or could not be deleted.", HttpStatus.NOT_FOUND);
@@ -131,14 +106,45 @@ public class ProjectController {
         try {
             projectService.deleteSelectedProjects(projectIds, companyId);
             // Return a NO_CONTENT status for successful deletion
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+          //return new ResponseEntity<>("Selected Projects Deleted Successfully.",HttpStatus.NO_CONTENT);
+            return new ResponseEntity<>("Selected projects deleted", HttpStatus.OK);
         } catch (Exception e) {
-            // Return a custom error message
             return new ResponseEntity<>("An error occurred while deleting selected projects.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-
-
-
 }
+
+// Creates a new project with error handling
+//    @PostMapping("/create")
+//    public ResponseEntity<?> createProject(@PathVariable Long companyId, @RequestBody ProjectDTO projectDTO) {
+//        try {
+//            projectDTO.setCompanyId(companyId); // Ensure the company ID is set in the DTO
+//            ProjectDTO createdProject = projectService.createProject(projectDTO);
+//            // Return the created project with a CREATED status
+//            return new ResponseEntity<>(createdProject, HttpStatus.CREATED);
+//        } catch (Exception e) {
+//            // In case of an error, return a message with an INTERNAL_SERVER_ERROR status
+//            return new ResponseEntity<>("An error occurred while creating the project.", HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+
+// Endpoint to retrieve projects by company ID
+//    @GetMapping("/company/{companyId}")
+//    public List<ProjectDTO> getProjectsByCompany(@PathVariable Long companyId) {
+//        return projectService.getProjectsByCompany(companyId);
+//    }
+
+// Retrieves projects for the specified company with error handling
+//    @GetMapping("/list")
+//    public ResponseEntity<List<?>> getProjectsByCompany(@PathVariable Long companyId) {
+//        try {
+//            List<ProjectDTO> projects = projectService.getProjectsByCompany(companyId);
+//            if (projects.isEmpty()) {
+//                return new ResponseEntity<>("No projects found for the specified company.", HttpStatus.NOT_FOUND);
+//            }
+//            return new ResponseEntity<>(projects, HttpStatus.OK);
+//        } catch (Exception e) {
+//            return new ResponseEntity<>("An error occurred while retrieving projects.", HttpStatus.INTERNAL_SERVER_ERROR);
+//        }
+//    }
+

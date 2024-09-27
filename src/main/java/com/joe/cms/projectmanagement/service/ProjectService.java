@@ -3,6 +3,7 @@ package com.joe.cms.projectmanagement.service;
 import com.joe.cms.projectmanagement.dto.ProjectDTO;
 import com.joe.cms.projectmanagement.mapper.ProjectMapper;
 import com.joe.cms.projectmanagement.model.Project;
+import com.joe.cms.projectmanagement.model.Task;
 import com.joe.cms.projectmanagement.repo.ProjectRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +32,26 @@ public class ProjectService {
                 .collect(Collectors.toList());
     }
 
+    //retrieving projects with task IDs
+    public List<ProjectDTO> getProjectsWithTaskIds(Long companyId) {
+        List<Project> projects = projectRepo.findByCompanyId(companyId); // Assuming you have this method
+        return projects.stream()
+                .map(project -> {
+                    ProjectDTO projectDTO = projectMapper.toDTO(project);
+                    List<Long> taskIds = project.getTasks().stream().map(Task::getId).collect(Collectors.toList());
+                    projectDTO.setTaskIds(taskIds);
+                    return projectDTO;
+                })
+                .collect(Collectors.toList());
+    }
+
+    public List<ProjectDTO> getProjectsWithTasksByCompanyId(Long companyId) {
+        List<Project> projects = projectRepo.findByCompanyId(companyId);
+        return projects.stream()
+                .map(projectMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
     // Creates a new project and returns the corresponding ProjectDTO
     public ProjectDTO createProject(ProjectDTO projectDTO){
         Project project = projectMapper.toEntity(projectDTO);
@@ -51,8 +72,14 @@ public class ProjectService {
         Project existingProject = projectRepo.findByIdAndCompanyId(projectDTO.getId(), projectDTO.getCompanyId())
                 .orElseThrow(() -> new RuntimeException("Project not found"));
 
+        // Map the incoming DTO fields to the existing entity
         existingProject.setName(projectDTO.getName());
         existingProject.setDescription(projectDTO.getDescription());
+        existingProject.setProjectStartDate(projectDTO.getProjectStartDate());
+        existingProject.setProjectEndDate(projectDTO.getProjectEndDate());
+        existingProject.setProjectStatus(projectDTO.getProjectStatus());  // Updating project status
+        existingProject.setProjectLocation(projectDTO.getProjectLocation());
+        existingProject.setProjectBudget(projectDTO.getProjectBudget());
 
         Project updatedProject = projectRepo.save(existingProject);
         return projectMapper.toDTO(updatedProject);

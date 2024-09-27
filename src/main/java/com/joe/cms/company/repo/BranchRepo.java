@@ -10,14 +10,9 @@ import java.util.Optional;
 
 @Repository
 public interface BranchRepo extends JpaRepository<Branch, Long> {
-
-    boolean existsByBranchName(String branchName);
-
-    boolean existsByBranchCode(String branchCode);
-
+    
     List<Branch> findAllByCompanyId(Long companyId);
-
+    boolean existsByBranchName(String branchName);
+    boolean existsByBranchCode(String branchCode);
     Optional<Branch> findByIdAndCompanyId(Long id, Long companyId);
-
-    Optional<Branch> findTopByOrderByBranchCodeDesc();
 }

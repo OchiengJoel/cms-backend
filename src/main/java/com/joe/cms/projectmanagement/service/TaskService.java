@@ -1,15 +1,18 @@
 package com.joe.cms.projectmanagement.service;
 
 import com.joe.cms.projectmanagement.dto.TaskDTO;
+import com.joe.cms.projectmanagement.enums.TaskStatus;
 import com.joe.cms.projectmanagement.mapper.TaskMapper;
 import com.joe.cms.projectmanagement.model.Project;
 import com.joe.cms.projectmanagement.model.Task;
 import com.joe.cms.projectmanagement.repo.ProjectRepo;
 import com.joe.cms.projectmanagement.repo.TaskRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,54 +29,91 @@ public class TaskService {
     @Autowired
     private TaskMapper taskMapper;
 
-    // Retrieves all tasks for a given project
-    public List<TaskDTO> getTasksByProject(Long projectId) {
+//    public List<TaskDTO> getAllTasks(Long projectId) {
+//        return taskRepository.findByProjectId(projectId).stream()
+//                .map(taskMapper::toDTO)
+//                .collect(Collectors.toList());
+//    }
+
+    public List<TaskDTO> getAllTasks(Long projectId) {
         return taskRepository.findByProjectId(projectId).stream()
                 .map(taskMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
-    // View a single task by task ID and project ID
-    public TaskDTO getTaskByIdAndProjectId(Long taskId, Long projectId) {
-        Task task = taskRepository.findByIdAndProjectId(taskId, projectId)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+    public TaskDTO getTaskById(Long taskId) {
+        Task task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found"));
         return taskMapper.toDTO(task);
     }
 
-    // Creates a new task
-    public TaskDTO createTask(TaskDTO taskDTO) {
-        Project project = projectRepository.findById(taskDTO.getProjectId())
-                .orElseThrow(() -> new RuntimeException("Project not found"));
+    public TaskDTO createTask(Long projectId, TaskDTO taskDTO) {
+        Project project = projectRepository.findById(projectId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Project not found"));
 
-        Task task = taskMapper.toEntity(taskDTO, project);
-        task = taskRepository.save(task);
-        return taskMapper.toDTO(task);
+        Task task = taskMapper.toEntity(taskDTO);
+        task.setProject(project);
+        return taskMapper.toDTO(taskRepository.save(task));
     }
 
-    // Updates an existing task
-    public TaskDTO updateTask(TaskDTO taskDTO) {
-        Task existingTask = taskRepository.findByIdAndProjectId(taskDTO.getId(), taskDTO.getProjectId())
-                .orElseThrow(() -> new RuntimeException("Task not found"));
+    public TaskDTO updateTask(Long taskId, TaskDTO taskDTO) {
+        Task existingTask = taskRepository.findById(taskId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found"));
 
-        taskMapper.updateEntity(existingTask, taskDTO);
-        Task updatedTask = taskRepository.save(existingTask);
-        return taskMapper.toDTO(updatedTask);
+        existingTask.setName(taskDTO.getName());
+        existingTask.setDescription(taskDTO.getDescription());
+        existingTask.setDueDate(taskDTO.getDueDate());
+        existingTask.setStatus(taskDTO.getStatus());
+        return taskMapper.toDTO(taskRepository.save(existingTask));
     }
 
-    // Deletes a task by task ID and project ID
-    public void deleteTask(Long taskId, Long projectId) {
-        Task task = taskRepository.findByIdAndProjectId(taskId, projectId)
-                .orElseThrow(() -> new RuntimeException("Task not found"));
-        taskRepository.delete(task);
-    }
-
-    // Deletes selected tasks by IDs and project ID
-    public void deleteSelectedTasks(List<Long> taskIds, Long projectId) {
-        List<Task> tasks = taskRepository.findByIdInAndProjectId(taskIds, projectId);
-        if (!tasks.isEmpty()) {
-            taskRepository.deleteAll(tasks);
+    public void deleteTask(Long taskId) {
+        if (!taskRepository.existsById(taskId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Task not found");
         }
+        taskRepository.deleteById(taskId);
     }
 
-
+//    private final TaskRepo taskRepo;
+//    private final ProjectRepo projectRepo;
+//
+//    @Autowired
+//    public TaskService(TaskRepo taskRepo, ProjectRepo projectRepo) {
+//        this.taskRepo = taskRepo;
+//        this.projectRepo = projectRepo;
+//    }
+//
+//    public List<TaskDTO> getTasksByProjectId(Long projectId) {
+//        return taskRepo.findByProjectId(projectId)
+//                .stream()
+//                .map(TaskMapper::toDTO)
+//                .collect(Collectors.toList());
+//    }
+//
+//    public TaskDTO getTaskById(Long taskId) {
+//        Task task = taskRepo.findById(taskId)
+//                .orElseThrow(() -> new IllegalArgumentException("Task not found"));
+//        return TaskMapper.toDTO(task);
+//    }
+//
+//    public void createTask(TaskDTO taskDTO) {
+//        Project project = projectRepo.findById(taskDTO.getProjectId())
+//                .orElseThrow(() -> new IllegalArgumentException("Project not found"));
+//        Task task = TaskMapper.toEntity(taskDTO, project);
+//        taskRepo.save(task);
+//    }
+//
+//    public void updateTask(Long taskId, TaskDTO taskDTO) {
+//        Task task = taskRepo.findById(taskId)
+//                .orElseThrow(() -> new IllegalArgumentException("Task not found"));
+//        task.setName(taskDTO.getName());
+//        task.setDescription(taskDTO.getDescription());
+//        task.setDueDate(taskDTO.getDueDate());
+//        task.setStatus(taskDTO.getStatus() != null ? taskDTO.getStatus() : TaskStatus.TODO);
+//        taskRepo.save(task);
+//    }
+//
+//    public void deleteTask(Long taskId) {
+//        taskRepo.deleteById(taskId);
+//    }
 }
